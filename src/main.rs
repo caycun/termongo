@@ -117,7 +117,7 @@ async fn connect(connection_string: String) -> Result<Client> {
             let client: Client = Client::with_options(c)?;
             Ok(client)
         }
-        Err(e) => return Err(anyhow!("Invalid connection string: {}", e)),
+        Err(e) => Err(anyhow!("Invalid connection string: {}", e)),
     }
 }
 
