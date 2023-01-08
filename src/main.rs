@@ -1,6 +1,6 @@
 use anyhow::{anyhow, Context, Result};
-use color_print::{cprintln, cprint};
 use clap::Parser;
+use color_print::{cprint, cprintln};
 use crossterm::{
     cursor,
     event::{self, Event, KeyCode},
@@ -10,10 +10,7 @@ use crossterm::{
 use futures::stream::TryStreamExt;
 use mongodb::{options::ClientOptions, Client, Database};
 use serde_json::Value;
-use std::{
-    io,
-    process,
-};
+use std::{io, process};
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -34,7 +31,7 @@ struct App {
     list: Vec<(String, usize)>,
     collection_list: Option<Vec<(String, usize)>>,
     database: Option<Database>,
-    database_name: String
+    database_name: String,
 }
 
 impl App {
@@ -61,14 +58,14 @@ impl App {
                 let name = database.unwrap();
                 cprintln!("<yellow>/{}</yellow>", name);
 
-                let db = self.client.database(&name);
+                let db = self.client.database(name);
 
                 let list: Vec<(_, _)> = db
                     .list_collection_names(None)
                     .await?
                     .into_iter()
                     .enumerate()
-                    .map(|(i, x)| (x, 1 * i))
+                    .map(|(i, x)| (x, i))
                     .collect();
 
                 for collection_name in &list {
@@ -98,11 +95,14 @@ impl App {
 
                 let data = cursor.try_collect().await.unwrap_or_else(|_| vec![]);
 
-                cprintln!("<yellow>{}/{}</yellow>", self.database_name, database.unwrap());
+                cprintln!(
+                    "<yellow>{}/{}</yellow>",
+                    self.database_name,
+                    database.unwrap()
+                );
                 for i in data {
-                    print!("{}\n", i);
+                    println!("{}", i);
                 }
-
             }
         }
         terminal::enable_raw_mode()?;
@@ -126,7 +126,7 @@ async fn main() -> Result<()> {
     let args = Args::parse();
     let client = connect(args.connect).await.unwrap();
     let l = client.list_database_names(None, None).await?;
-    let list: Vec<(_, _)> = l.into_iter().enumerate().map(|(i, x)| (x, 1 * i)).collect();
+    let list: Vec<(_, _)> = l.into_iter().enumerate().map(|(i, x)| (x, i)).collect();
 
     let mut app = App {
         list,
@@ -134,7 +134,7 @@ async fn main() -> Result<()> {
         state: State::Default,
         collection_list: None,
         database: None,
-        database_name: String::from("None")
+        database_name: String::from("None"),
     };
 
     let mut stdout = io::stdout();
@@ -187,11 +187,11 @@ async fn main() -> Result<()> {
                     KeyCode::Enter => {
                         let index: usize = (cursor::position()?.1 - 1).into();
                         let collection = app.collection_list.take().expect("No collection found.");
-                        for i in 0..collection.len() {
-                            let (item, item_index) = &collection[i];
+                        for i in &collection {
+                            let (item, item_index) = i;
                             if item_index == &index {
                                 app.state = State::InsideCollection;
-                                app.change_state(&State::InsideCollection, Some(&item))
+                                app.change_state(&State::InsideCollection, Some(item))
                                     .await?;
                             }
                         }
