@@ -1,6 +1,9 @@
 [package]
 name = "termongo"
 version = "0.1.0"
+description="A tool to view your mongoose data in the terminal."
+license="MIT"
+repository="https://github.com/caycun/termongo"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
