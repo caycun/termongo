@@ -35,7 +35,7 @@ struct App {
 }
 
 impl App {
-    async fn change_state(&mut self, state: &State, database: Option<&String>) -> Result<()> {
+    async fn change_state(&mut self, state: &State, database: Option<&str>) -> Result<()> {
         terminal::disable_raw_mode()?;
         match state {
             State::Default => {
@@ -45,7 +45,7 @@ impl App {
                     terminal::Clear(ClearType::All),
                 );
                 for item in &self.list {
-                    cprintln!("<green>></green>  {}", item.0)
+                    cprintln!("<green>></green>  {}", item.0);
                 }
             }
             State::InsideDatabase => {
@@ -86,7 +86,7 @@ impl App {
                     .database
                     .as_ref()
                     .unwrap()
-                    .collection::<Value>(database.as_ref().expect("No data.").as_str());
+                    .collection::<Value>(database.as_ref().expect("No data."));
 
                 let cursor = match collection.find(None, None).await {
                     Ok(cursor) => cursor,
@@ -101,7 +101,7 @@ impl App {
                     database.unwrap()
                 );
                 for i in data {
-                    println!("{}", i);
+                    println!("{i}");
                 }
             }
         }
@@ -146,7 +146,7 @@ async fn main() -> Result<()> {
         terminal::Clear(ClearType::All),
     );
     for item in &app.list {
-        cprintln!("<green>></green>  {}", item.0)
+        cprintln!("<green>></green>  {}", item.0);
     }
 
     terminal::enable_raw_mode()?;
