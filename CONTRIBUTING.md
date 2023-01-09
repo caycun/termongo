@@ -23,10 +23,10 @@ Submit an [issue][2] to request a new feature.
 Before you do anything, make sure you check the current list of [pull requests][4]
 to ensure you aren't duplicating anyone's work. Then, do the following:
 
-1. Fork the repository and make your changes in a git branch: `git checkout -b my-branch base-branch`
+1. Fork the repository and make your changes in a git branch.
 2. Run `cargo fmt` and `cargo clippy` after you made changes.
 3. Commit your changes, and be sure to follow [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/).
-4. Push your branch to your forked repo on GitHub: `git push origin my-branch`
+4. Push your branch to your forked repo on GitHub.
 5. [Submit a pull request][3] and hold tight!
 6. If any changes are requested by the project maintainers, make them and follow
    this process again until the changes are merged in.
