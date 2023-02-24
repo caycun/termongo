@@ -1,7 +1,7 @@
 
 # termongo
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-A tool to view your mongoose data in the terminal. This project is still under development. Currently, you can only view data. Will add more features like data management and more.
+A tool to view your mongodb data in the terminal. This project is still under development. Currently, you can only view data. Will add more features like data management and more.
 ## Installation
 
 #### Note: You need [Rust](https://www.rust-lang.org/) to install this.
