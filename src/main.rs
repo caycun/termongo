@@ -29,9 +29,11 @@ struct App {
     client: Client,
     state: State,
     list: Vec<(String, usize)>,
+    collection_name: String,
     collection_list: Option<Vec<(String, usize)>>,
     database: Option<Database>,
     database_name: String,
+    previous_line: usize,
 }
 
 impl App {
@@ -105,6 +107,10 @@ impl App {
                 }
             }
         }
+        execute!(
+            io::stdout(),
+            cursor::MoveToRow(self.previous_line as u16 + 1)
+        )?;
         terminal::enable_raw_mode()?;
         Ok(())
     }
@@ -132,9 +138,11 @@ async fn main() -> Result<()> {
         list,
         client,
         state: State::Default,
+        collection_name: String::new(),
         collection_list: None,
         database: None,
         database_name: String::from("None"),
+        previous_line: 1,
     };
 
     let mut stdout = io::stdout();
@@ -165,6 +173,7 @@ async fn main() -> Result<()> {
                         let index = cursor::position()?.1 as usize;
                         for item in &app.list {
                             if item.1 == index {
+                                app.previous_line = index;
                                 let matc = String::from(&item.0);
                                 app.state = State::InsideDatabase;
                                 app.database_name = matc.clone();
@@ -190,7 +199,9 @@ async fn main() -> Result<()> {
                         for i in &collection {
                             let (item, item_index) = i;
                             if item_index == &index {
+                                app.previous_line = index;
                                 app.state = State::InsideCollection;
+                                app.collection_name = item.to_string();
                                 app.change_state(&State::InsideCollection, Some(item))
                                     .await?;
                             }
